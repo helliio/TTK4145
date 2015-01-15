@@ -28,6 +28,10 @@ func main() {
     go increment()
     go decrement()
 
+    // There is no way to wait for the completion of a
+    // goroutine. This would require explicit communication.
+    // Like in the hello-world example for this excercise,
+    // we do a rather shady wait using sleep.
     time.Sleep(100 * time.Millisecond)
 
     Println(accumulator)
