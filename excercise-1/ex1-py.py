@@ -1,23 +1,26 @@
 from threading import Thread
 
 i = 0
+iterations = 1000000
 
-def someThreadFunction1():
+def increase():
 	global i
-	for x in range(1000000):
-		i=i+1
+	for x in range(iterations):
+		i = i + 1
 
-def someThreadFunction2():
+def decrease():
 	global i
-	for x in range(1000000):
-		i=i-1
+	for x in range(iterations):
+		i = i - 1
 
 def main():
-	someThread1 = Thread(target = someThreadFunction1, args = (),)
-	someThread2 = Thread(target = someThreadFunction2, args = (),)
-	someThread1.start()
-	someThread2.start()
-	someThread1.join()
-	someThread2.join()
+	thread_inc = Thread(target = increase, args = (),)
+	thread_dec = Thread(target = decrease, args = (),)
+	thread_inc.start()
+	thread_dec.start()
+	thread_inc.join()
+	thread_dec.join()
 	print(i)
-main()
+	
+if __name__ == "__main__":
+	main()
