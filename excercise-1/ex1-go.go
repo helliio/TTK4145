@@ -2,8 +2,8 @@ package main
 
 import (
     . "fmt"
-	"runtime"
-	"time"
+    "runtime"
+    "time"
 )
 
 const iterations = 1000000
@@ -23,12 +23,12 @@ func decrement() {
 }
 
 func main() {
-	runtime.GOMAXPROCS(runtime.NumCPU())
+    runtime.GOMAXPROCS(runtime.NumCPU())
 
-	go increment()
-	go decrement()
+    go increment()
+    go decrement()
 
-	time.Sleep(100 * time.Millisecond)
+    time.Sleep(100 * time.Millisecond)
 
-	Println(accumulator)
+    Println(accumulator)
 }
