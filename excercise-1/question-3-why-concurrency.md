@@ -13,6 +13,7 @@ With concurrency, this task management becomes implict.
 
 If we are not careful, concurrency can introduce observable nondeterminizim to our program.
 There usually are parts of a program that we wish to happen atomically.
+That is to say: as if all other threads were paused.
 
 In part 4 of this excercise, we demonstrate that we get nondeterministic behaviour.
 The shared resourse `accumulator` or `i`, is read and updated by two threads concurrently.
@@ -23,14 +24,20 @@ The result is that we end up with something else than if we were to execute the 
 > and coroutines?
 
 Both threads and processes are created by cloning another thread.
-The difference is that creating a process will assign it a new memory space and 
+The difference is that creating a process will assign it a new copy of the memory map, file descriptor table and other kernel data structures.
+A thread shares these resources with the thread it was cloned from, but gets a new entry in the process sheduler and a new program counter and stack.
+
+A green thread is not managed nor known to the operating system.
+All the grean threads run in one OS thread, and are managed by the runtime of the program.
+
+A coroutine is like a green thread, except it has language support for *yielding* values to the caller.
 
 > - Which one of these do `pthread_create()` (C/POSIX),
 >   `threading.Thread()` (Python), `go` (Go) create?
 
   - POXIX: threads
   - CPython threading module: threads, but limited by the GIL
-  - Go: coroutines
+  - Go: "goroutines": coroutines maybe?
 
 > - How does pythons Global Interpreter Lock (GIL) influence the way a
 >   python Thread behaves?
