@@ -4,11 +4,14 @@
 const int iterations = 1000000;
 
 int accumulator = 0;
+pthread_mutex_t lock = PTHREAD_MUTEX_INITIALIZER;
 
 void *increase(){
     for(int i = 0; i < iterations; i++)
     {
+        pthread_mutex_lock(&lock);
         accumulator++;
+        pthread_mutex_unlock(&lock);
     }
 
     return NULL;
@@ -17,7 +20,9 @@ void *increase(){
 void *decrease(){
     for(int i = 0; i < iterations; i++)
     {
+        pthread_mutex_lock(&lock);
         accumulator--;
+        pthread_mutex_unlock(&lock);
     }
 
     return NULL;
