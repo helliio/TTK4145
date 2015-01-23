@@ -10,15 +10,22 @@ const iterations = 1000000
 
 var accumulator int
 
+type unit struct{}
+var lock chan unit
+
 func increment() {
     for i := 0; i < iterations; i++ {
+        <- lock
         accumulator++
+        lock <- unit{}
     }
 }
 
 func decrement() {
     for i := 0; i < iterations; i++ {
+        <- lock
         accumulator -= 1
+        lock <- unit{}
     }
 }
 
