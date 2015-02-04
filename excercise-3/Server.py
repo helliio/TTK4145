@@ -16,11 +16,11 @@ s_udp.bind((udpIp, udpPort))
 conn_tcp, add_tcp = s_tcp.accept()
 print 'conntection TCP address:', add_tcp
 while 1:
-	data_tcp = conn_tcp.recv(buffer)
-	data_udp = s_udp.recvfrom(buffer)
-	#if not data: break
-	if data_tcp:
-		print "received TCP message: ", data_tcp
-		conn_tcp.send(data_tcp)  # echo
-	if data_udp:
-		print "received UDP message: ", data_udp
+    data_tcp = conn_tcp.recv(buffer)
+    data_udp = s_udp.recvfrom(buffer)
+    #if not data: break
+    if data_tcp:
+        print "received TCP message: ", data_tcp
+        conn_tcp.send(data_tcp)  # echo
+    if data_udp:
+        print "received UDP message: ", data_udp
