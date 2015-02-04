@@ -2,9 +2,9 @@
 import socket
 
 tcpIp = "0.0.0.0"
-tcpPort = ""
+tcpPort = 34933
 udpIp = 
-udpPort = 
+udpPort = 30000
 buffer = 1024
 
 s_tcp = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
