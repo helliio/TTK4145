@@ -3,7 +3,7 @@ import socket
 
 tcpIp = "0.0.0.0"
 tcpPort = 34933
-udpIp = 
+udpIp = "0.0.0.0"
 udpPort = 30000
 buffer = 1024
 
@@ -24,3 +24,4 @@ while 1:
         conn_tcp.send(data_tcp)  # echo
     if data_udp:
         print "received UDP message: ", data_udp
+        
