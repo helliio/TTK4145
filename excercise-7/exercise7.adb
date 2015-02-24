@@ -32,12 +32,12 @@ procedure exercise7 is
         begin
             return Should_Commit;
         end Commit;
-        
+
     end Transaction_Manager;
 
 
 
-    
+
     function Unreliable_Slow_Add (x : Integer) return Integer is
     Error_Rate : Constant := 0.15;  -- (between 0 and 1)
     begin
@@ -62,9 +62,9 @@ procedure exercise7 is
             Round_Num := Round_Num + 1;
 
             ---------------------------------------
-            -- PART 2: Do the transaction work here             
+            -- PART 2: Do the transaction work here
             ---------------------------------------
-            
+
             if Manager.Commit = True then
                 Put_Line ("  Worker" & Integer'Image(Initial) & " comitting" & Integer'Image(Num));
             else
@@ -91,6 +91,3 @@ procedure exercise7 is
 begin
     Reset(Gen); -- Seed the random number generator
 end exercise7;
-
-
-
