@@ -21,6 +21,12 @@ procedure exercise7 is
             ------------------------------------------
             -- PART 3: Complete the exit protocol here
             ------------------------------------------
+            Should_Commit := not Aborted;
+            Finished_Gate_Open := (Finished'Count /= 0);
+
+            if not Finished_Gate_Open then
+                Aborted := False;
+            end if;
         end Finished;
 
         procedure Signal_Abort is
@@ -39,11 +45,20 @@ procedure exercise7 is
 
 
     function Unreliable_Slow_Add (x : Integer) return Integer is
-    Error_Rate : Constant := 0.15;  -- (between 0 and 1)
+        Error_Rate : Constant := 0.15;  -- (between 0 and 1)
     begin
         -------------------------------------------
         -- PART 1: Create the transaction work here
         -------------------------------------------
+        if Random(Gen) <= Error_Rate then
+            -- Trigger fault
+            delay Duration(0.5 * Random(Gen));
+            raise Count_Failed;
+        else
+            -- Normal procedure
+            delay Duration(1.0 + 2.0 * Random(Gen));
+            return x + 10;
+        end if;
     end Unreliable_Slow_Add;
 
 
@@ -64,6 +79,13 @@ procedure exercise7 is
             ---------------------------------------
             -- PART 2: Do the transaction work here
             ---------------------------------------
+            begin
+                Num := Unreliable_Slow_Add(Num);
+            exception
+                when Count_Failed =>
+                    Manager.Signal_Abort;
+            end;
+            Manager.Finished;
 
             if Manager.Commit = True then
                 Put_Line ("  Worker" & Integer'Image(Initial) & " comitting" & Integer'Image(Num));
@@ -74,6 +96,7 @@ procedure exercise7 is
                 -------------------------------------------
                 -- PART 2: Roll back to previous value here
                 -------------------------------------------
+                Num := Prev;
             end if;
 
             Prev := Num;
