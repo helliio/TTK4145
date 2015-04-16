@@ -1,29 +1,7 @@
 #include "elev.h"
 #include <stdio.h>
 
-//move elevator up or down
-void moveElev(int floor,int dir){
-    //Do something
-    return()
-}
 
-//Button pressed outside the elevator
-void buttonPressedWall(){
-    //Do something
-    return;
-}
-
-//Button pressed inside the elevator
-void buttonPressedElev(){
-    //Do something
-    return;
-}
-
-//Send signal to server
-void sendSignal(){
-    //Send this shit
-    return;
-}
 
 
 int main() {
