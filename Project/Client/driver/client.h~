@@ -1,1 +1,22 @@
+/**
+Set floor lamps
+*/
 void set_elev_floor_lamp(void); 
+
+/**
+Send button signal to server
+*/
+void send_elevator_call_signal(void);
+
+/**
+Run once!
+*/
+void initialize_io_pannel(void);
+
+void listen_to_io_panels(void);
+
+int get_button_elevator_command(void);
+
+int get_button_floor_up(void);
+
+int get_button_floor_down(void);
