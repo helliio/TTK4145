@@ -13,6 +13,13 @@ void initialize_io_pannel(void){
     }
 }
 
+void open_and_close_door(void){
+    elev_set_door_open_lamp(1);
+    delay(15000);
+    elev_set_door_open_lamp(0);
+    return;
+}
+
 void stop_elev_at_next_floor(void){
     int i = elev_get_floor_sensor_signal();
     if (i != -1) {
@@ -61,6 +68,7 @@ void go_to_floor(int target){
         return;
     }
     if (i == target) {
+        open_and_close_door();
         return;
     }
     if (i > target) {
@@ -68,6 +76,7 @@ void go_to_floor(int target){
             int i = elev_get_floor_sensor_signal();
             if (i == target) {
                 elev_set_motor_direction(DIRN_STOP);
+                open_and_close_door();
                 break;
             }
             elev_set_motor_direction(DIRN_DOWN);
@@ -79,6 +88,7 @@ void go_to_floor(int target){
             int i = elev_get_floor_sensor_signal();
             if (i == target) {
                 elev_set_motor_direction(DIRN_STOP);
+                open_and_close_door();
                 break;
             }
             elev_set_motor_direction(DIRN_UP);

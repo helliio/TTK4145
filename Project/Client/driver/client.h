@@ -32,3 +32,9 @@ void go_to_floor(int target);
 Go up or down one floor -1 for down 1 for up
 */
 void move_elev_once(int dir);
+
+/**
+Open and close door
+*/
+
+void open_and_close_door(void);
