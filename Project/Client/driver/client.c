@@ -13,12 +13,55 @@ void initialize_io_pannel(void){
     }
 }
 
+void stop_elev_at_next_floor(void){
+    int i = elev_get_floor_sensor_signal();
+    if (i != -1) {
+        elev_set_motor_direction(DIRN_STOP);
+        if(i < N_FLOORS-1){ 
+            elev_set_button_lamp(BUTTON_CALL_UP, i, 0);
+        }
+        if(i > 0){
+            elev_set_button_lamp(BUTTON_CALL_DOWN, i, 0);
+        }
+        elev_set_button_lamp(BUTTON_COMMAND, i, 0);
+    }
+}
+
 void set_elev_floor_lamp(void){
     int i = elev_get_floor_sensor_signal();
     if (i != -1) {
         elev_set_floor_indicator(i);
-        elev_set_button_lamp(BUTTON_COMMAND, i, 0);
-        io_pannels[0][i]=0;
+    }
+}
+
+void go_to_floor(int target){
+    int i = elev_get_floor_sensor_signal();
+    if (i == -1) {
+        printf("elev not at floor");
+        return;
+    }
+    if (i == target) {
+        return;
+    }
+    if (i > target) {
+        while (1) {
+            int i = elev_get_floor_sensor_signal();
+            if (i == target) {
+                break;
+            }
+            elev_set_motor_direction(DIRN_DOWN);
+        }
+        return;
+    }
+    if (i < target) {
+        while (1) {
+            int i = elev_get_floor_sensor_signal();
+            if (i == target) {
+                break;
+            }
+            elev_set_motor_direction(DIRN_UP);
+        }
+        return;
     }
 }
 
@@ -30,7 +73,7 @@ void listen_to_io_panels(void){
             io_pannels[0][i]=1;
             printf("Button COMMAND floor ",i+1," Pushed\n");
         }
-        if(i < 3){
+        if(i < N_FLOORS-1){
             if(elev_get_button_signal(BUTTON_CALL_UP, i) == 1){
                 elev_set_button_lamp(BUTTON_CALL_UP, i, 1);
                 io_pannels[1][i]=1;
