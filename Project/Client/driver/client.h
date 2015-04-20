@@ -27,3 +27,8 @@ void stop_elev_at_next_floor(void);
 Tell the elevator to go to floor
 */
 void go_to_floor(int target);
+
+/**
+Go up or down one floor -1 for down 1 for up
+*/
+void move_elev_once(int dir);

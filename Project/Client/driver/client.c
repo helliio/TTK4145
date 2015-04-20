@@ -34,6 +34,26 @@ void set_elev_floor_lamp(void){
     }
 }
 
+void move_elev_once(int dir){
+    int i = elev_get_floor_sensor_signal();
+    if (dir > 0) {
+        if (i == N_FLOORS-1) {
+            printf("Elev cant go up")
+            return;
+        }
+        go_to_floor(i+1);
+        return;
+    }
+    if (dir < 0) {
+        if (i == 0) {
+            printf("Elev cant fo down")
+            return;
+        }
+        go_to_floor(i-1);
+        return;
+    }
+}
+
 void go_to_floor(int target){
     int i = elev_get_floor_sensor_signal();
     if (i == -1) {
@@ -47,6 +67,7 @@ void go_to_floor(int target){
         while (1) {
             int i = elev_get_floor_sensor_signal();
             if (i == target) {
+                elev_set_motor_direction(DIRN_STOP);
                 break;
             }
             elev_set_motor_direction(DIRN_DOWN);
@@ -57,6 +78,7 @@ void go_to_floor(int target){
         while (1) {
             int i = elev_get_floor_sensor_signal();
             if (i == target) {
+                elev_set_motor_direction(DIRN_STOP);
                 break;
             }
             elev_set_motor_direction(DIRN_UP);
