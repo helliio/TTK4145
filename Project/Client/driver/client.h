@@ -38,3 +38,8 @@ Open and close door
 */
 
 void open_and_close_door(void);
+
+/**
+Turn off light at designated floor
+*/
+void turn_off_lights_at_floor (int i);

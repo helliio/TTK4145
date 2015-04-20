@@ -24,6 +24,12 @@ void stop_elev_at_next_floor(void){
     int i = elev_get_floor_sensor_signal();
     if (i != -1) {
         elev_set_motor_direction(DIRN_STOP);
+        turn_off_lights_at_floor(i);
+    }
+}
+
+void turn_off_lights_at_floor(int i){
+    if (i >= 0 && i <= N_FLOORS-1) {
         if(i < N_FLOORS-1){ 
             elev_set_button_lamp(BUTTON_CALL_UP, i, 0);
         }
@@ -33,6 +39,7 @@ void stop_elev_at_next_floor(void){
         elev_set_button_lamp(BUTTON_COMMAND, i, 0);
     }
 }
+
 
 void set_elev_floor_lamp(void){
     int i = elev_get_floor_sensor_signal();
@@ -76,6 +83,7 @@ void go_to_floor(int target){
             int i = elev_get_floor_sensor_signal();
             if (i == target) {
                 elev_set_motor_direction(DIRN_STOP);
+                turn_off_lights_at_floor(i);
                 open_and_close_door();
                 break;
             }
@@ -88,6 +96,7 @@ void go_to_floor(int target){
             int i = elev_get_floor_sensor_signal();
             if (i == target) {
                 elev_set_motor_direction(DIRN_STOP);
+                turn_off_lights_at_floor(i);
                 open_and_close_door();
                 break;
             }
