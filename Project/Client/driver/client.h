@@ -24,16 +24,6 @@ Stop the elevator at the next floor it passes
 void stop_elev_at_next_floor(void);
 
 /**
-Tell the elevator to go to floor
-*/
-void go_to_floor(int target);
-
-/**
-Go up or down one floor -1 for down 1 for up
-*/
-void move_elev_once(int dir);
-
-/**
 Open and close door
 */
 
@@ -43,3 +33,8 @@ void open_and_close_door(void);
 Turn off light at designated floor
 */
 void turn_off_lights_at_floor (int i);
+
+/**
+Move the elevator and it will stop at any floor that has a stop flag
+*/
+void move_elevator(int dir);

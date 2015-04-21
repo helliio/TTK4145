@@ -3,6 +3,8 @@
 #include <stdlib.h>
 
 int io_pannels[3][N_FLOORS];
+int move_dir = 0;
+int location = -1;
 
 void initialize_io_pannel(void){
     int i, j;
@@ -11,6 +13,10 @@ void initialize_io_pannel(void){
             io_pannels[i][j]=0;
         }
     }
+}
+
+void move_elevator(int dir){
+    
 }
 
 void open_and_close_door(void){
@@ -24,6 +30,7 @@ void stop_elev_at_next_floor(void){
     int i = elev_get_floor_sensor_signal();
     if (i != -1) {
         elev_set_motor_direction(DIRN_STOP);
+        open_and_close_door();
         turn_off_lights_at_floor(i);
     }
 }
@@ -48,63 +55,6 @@ void set_elev_floor_lamp(void){
     }
 }
 
-void move_elev_once(int dir){
-    int i = elev_get_floor_sensor_signal();
-    if (dir > 0) {
-        if (i == N_FLOORS-1) {
-            printf("Elev cant go up")
-            return;
-        }
-        go_to_floor(i+1);
-        return;
-    }
-    if (dir < 0) {
-        if (i == 0) {
-            printf("Elev cant fo down")
-            return;
-        }
-        go_to_floor(i-1);
-        return;
-    }
-}
-
-void go_to_floor(int target){
-    int i = elev_get_floor_sensor_signal();
-    if (i == -1) {
-        printf("elev not at floor");
-        return;
-    }
-    if (i == target) {
-        open_and_close_door();
-        return;
-    }
-    if (i > target) {
-        while (1) {
-            int i = elev_get_floor_sensor_signal();
-            if (i == target) {
-                elev_set_motor_direction(DIRN_STOP);
-                turn_off_lights_at_floor(i);
-                open_and_close_door();
-                break;
-            }
-            elev_set_motor_direction(DIRN_DOWN);
-        }
-        return;
-    }
-    if (i < target) {
-        while (1) {
-            int i = elev_get_floor_sensor_signal();
-            if (i == target) {
-                elev_set_motor_direction(DIRN_STOP);
-                turn_off_lights_at_floor(i);
-                open_and_close_door();
-                break;
-            }
-            elev_set_motor_direction(DIRN_UP);
-        }
-        return;
-    }
-}
 
 void listen_to_io_panels(void){
     int i;
