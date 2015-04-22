@@ -38,3 +38,8 @@ void move_elevator(int dir);
 Execute orders from the array
 */
 void execute_orders(void);
+
+/**
+returns 1 if door is open 0 if door is closed
+*/
+int is_door_open(double open_time);
