@@ -69,11 +69,45 @@ void move_elevator(int dir){
 
 int should_stop(int floor){
     if (commands[0][floor] == 1 || (commands[1][floor] == 1 && move_dir >= 0) || (commands[2][floor] == 1 && move_dir <= 0)){
-        printf("stop %d\n", floor);
+        printf("stop %d\n", floor+1);
         return 1;
     }else{
         //printf("no stop\n");
         return 0;
+    }
+}
+
+int could_stop(int floor){
+    if (commands[0][floor] == 1 || commands[1][floor] == 1 || commands[2][floor] == 1){
+        return 1;
+    }else{
+        return 0;
+    }
+}
+
+void stop_if_done(void){
+    int do_cont = 0;
+    if (move_dir > 0){
+        int i;
+        for(i=loc+1;i<N_FLOORS;i++){
+            if (could_stop(i)==1){
+                do_cont = 1;
+            }
+        }
+    }
+    if (move_dir < 0){
+        int i;
+        for(i=0;i<loc;i++){
+            if (could_stop(i)==1){
+                printf("please continue down\n");
+                do_cont = 1;
+            }
+        }
+    }
+    if (do_cont == 0){
+        if (move_dir != 0)
+            printf("nothing in this direction\n");
+        move_dir = 0;
     }
 }
 
@@ -82,6 +116,7 @@ void execute_orders(void){
     if (loc != -1){
         if(should_stop(loc) == 1){
             stop_and_open();
+            stop_if_done();
         }else if(move_dir==0){
             int i,j;
             for (i=0; i<3;i++){
@@ -101,130 +136,23 @@ void execute_orders(void){
                     }
                 }
             }
-            //printf("no orders pending\n");
+
         }else{
-            //printf("continuing in direction %d\n", move_dir);
-            int do_cont = 0;
-            if (move_dir > 0){
-                int i;
-                for(i=loc;i<N_FLOORS;i++){
-                    if (should_stop(i)==1){
-                        do_cont = 1;
-                    }
-                }
-            }
-            if (move_dir < 0){
-                int i;
-                for(i=0;i<loc;i++){
-                    if (should_stop(i)==1){
-                        do_cont = 1;
-                    }
-                }
-            }
-            if (do_cont == 0){
-                move_dir = 0;
-            }
+            stop_if_done();
+            printf("direction %d\n", move_dir);
             if (loc == 0 && move_dir == -1){
+                printf("at the bottom\n");
                 move_dir = 0;
             }
             if (loc == N_FLOORS-1 && move_dir == 1){
+                printf("at the top\n");
                 move_dir = 0;
             }
+
             move_elevator(move_dir);
         }
     }
 }
-
-/**
-void execute_orders(void){
-    int i;
-    int orders = 0;
-    int outside = 0;
-    int loc = elev_get_floor_sensor_signal();
-    if (loc == -1) {
-        return;
-    }
-    for (i=0;i<N_FLOORS;i++){
-        if (commands[1][i]==1 || commands[2][i]==1){
-            outside = 1;
-        }
-    }
-    for (i=0;i<N_FLOORS;i++) {
-        if (commands[0][i]==1 || commands[1][i]==1 || commands[2][i]==1) {
-            orders = 1;
-        }
-        if (move_dir == 0) {
-            if ((commands[0][i]==1 && outside == 0) || commands[1][i]==1 || commands[2][i]==1) {
-                if (loc > i) {
-                    move_dir = -1;
-                    move_elevator(-1);
-                    return;
-                }
-                if (loc < i) {
-                    move_dir = 1;
-                    move_elevator(1);
-                    return;
-                }
-                if (loc == i) {
-                    stop_and_open();
-                    return;
-                }
-            }
-        }
-    }
-        if (move_dir > 0) {
-            if (commands[1][i]==1 && loc != -1) {
-                stop_and_open();
-                
-                return;
-            }else if (commands[0][i]==1 && loc != -1) {
-                printf("up\n");
-                stop_and_open();
-                return;
-            }else{
-                int x, y=0;
-                for (x=loc;x<N_FLOORS;x++){
-                    if (commands[1][x] == 1){
-                        y=1;
-                    }
-                }
-                if (y==0){
-                    move_dir = 0;
-                }else{
-                    move_elevator(1);
-                }
-            }
-        }
-        if (move_dir < 0) {
-            if (commands[2][i]==1 && loc != -1) {
-                stop_and_open();
-                
-                return;
-            }else if (commands[0][i]==1 && loc != -1) {
-                printf("down\n");
-                stop_and_open();
-                return;
-            }else{
-                int x, y=0;
-                for (x=0;x<loc;x++){
-                    if (commands[1][x] == 1){
-                        y=1;
-                    }
-                }
-                if (y==0){
-                    move_dir = 0;
-                }else{
-                    move_elevator(-1);
-                }
-            }
-
-        }
-    if (orders == 0) {
-        elev_set_motor_direction(DIRN_STOP);
-        move_dir = 0; 
-    }   
-}
-*/
 
 void stop_and_open(void){
     int i = elev_get_floor_sensor_signal();

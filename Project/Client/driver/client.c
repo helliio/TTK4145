@@ -77,11 +77,46 @@ int should_stop(int floor){
     }
 }
 
+int could_stop(int floor){
+    if (commands[0][floor] == 1 || commands[1][floor] == 1 || commands[2][floor] == 1){
+        return 1;
+    }else{
+        return 0;
+    }
+}
+
+void stop_if_done(int loc){
+    int do_cont = 0;
+    if (move_dir > 0){
+        int i;
+        for(i=loc+1;i<N_FLOORS;i++){
+            if (could_stop(i)==1){
+                do_cont = 1;
+            }
+        }
+    }
+    if (move_dir < 0){
+        int i;
+        for(i=0;i<loc;i++){
+            if (could_stop(i)==1){
+                printf("please continue down\n");
+                do_cont = 1;
+            }
+        }
+    }
+    if (do_cont == 0){
+        if (move_dir != 0)
+            printf("nothing in this direction\n");
+        move_dir = 0;
+    }
+}
+
 void execute_orders(void){
     int loc = elev_get_floor_sensor_signal();
     if (loc != -1){
         if(should_stop(loc) == 1){
             stop_and_open();
+            stop_if_done(loc);
         }else if(move_dir==0){
             int i,j;
             for (i=0; i<3;i++){
@@ -103,33 +138,17 @@ void execute_orders(void){
             }
 
         }else{
-
-            int do_cont = 0;
-            if (move_dir > 0){
-                int i;
-                for(i=loc;i<N_FLOORS;i++){
-                    if (should_stop(i)==1){
-                        do_cont = 1;
-                    }
-                }
-            }
-            if (move_dir < 0){
-                int i;
-                for(i=0;i<loc;i++){
-                    if (should_stop(i)==1){
-                        do_cont = 1;
-                    }
-                }
-            }
-            if (do_cont == 0){
-                move_dir = 0;
-            }
+            stop_if_done(loc);
+            printf("direction %d\n", move_dir);
             if (loc == 0 && move_dir == -1){
+                printf("at the bottom\n");
                 move_dir = 0;
             }
             if (loc == N_FLOORS-1 && move_dir == 1){
+                printf("at the top\n");
                 move_dir = 0;
             }
+
             move_elevator(move_dir);
         }
     }
