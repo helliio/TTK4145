@@ -10,11 +10,13 @@ elevator_list = []
 
 sending = []
 
+listen = ElevListener(*address)
+
 def waiting():
-    select(elevator_list + [listener], sending, [])
+    select(elevator_list + [listen], sending, [])
 
 def incomming():
-    return select([listener], [], [], 0)[0]
+    return select([listen], [], [], 0)[0]
 
 def get_elevator():
     return select(elevator_list, [], [], 0)[0]
@@ -53,7 +55,6 @@ def handle_disconnect(Elev):
         move_elevator(i[0],i[1])
     
 def main():
-    listen = ElevListener(*address)
     
     while 1:
         waiting()
