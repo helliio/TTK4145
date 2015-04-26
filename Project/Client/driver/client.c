@@ -70,6 +70,39 @@ void initialize(void){
     send_location(1);
 }
 
+void act_message(char * message)
+{
+}
+
+void *receve(void *arg)
+{
+	#define buf_len (256)
+	#define buf_space (buf_len - buf_fill)
+	#define buf_end (&buf[buf_fill])
+
+	char buf[buf_len];
+	int buf_fill = 0;
+
+	// ensure the buffer can be treated as a string
+	buf[0] = '\0';
+
+	for(;;)
+	{
+		buf_fill += recv(sock, buf_end, buf_space, 0);
+
+		char * next_line = strchr(buf, '\n') + 1;
+		int line_len = next_line - buf;
+
+		if(next_line)
+		{
+			act_message(buf);
+
+			buf_fill -= line_len;
+			memmove(&buf, next_line, buf_fill);
+			buf[buf_fill] = 0;
+		}
+	}
+}
 
 void send_location(int stop){
     char floor[20];
