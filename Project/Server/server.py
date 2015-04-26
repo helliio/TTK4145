@@ -9,7 +9,7 @@ address = ('localhost', 10000)
 elevator_list = []
 
 def handle_disconnect(Elev):
-    for i in Elev.orders:
+    for i in Elev.order_list:
         move_elevator(i[0],i[1])
 
 def handle_button(Elev):
@@ -35,7 +35,7 @@ def move_elevator(floor, dir):
     else:
         Elev = choice(elevator_list)
     Elev.writeln(message)
-    Elev.orders.add((floor, dir))
+    Elev.order_list.add((floor, dir))
 
 def main():
     

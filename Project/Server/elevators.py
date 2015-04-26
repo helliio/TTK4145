@@ -4,7 +4,7 @@ class Elev(Socket):
     def __init__(self):
         self.floor = None;
         self.dir = None;
-        self.orders = set()
+        self.order_list = set()
         
 
     @staticmethod
