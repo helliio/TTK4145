@@ -72,6 +72,29 @@ void initialize(void){
 
 void act_message(char * message)
 {
+    char msg[20];
+    int loc;
+    int dir;
+
+	int scans = sscanf(message, "%s %d %d", msg, &loc, &dir);
+
+	if(scans != 3)
+		return;
+		// invalid message
+
+
+    if (strcmp(msg, "lite") == 0){
+        turn_off_lights_at_floor(loc, dir);
+    }
+
+    if (strcmp(msg, "move") == 0){
+        if (dir > 0){
+            commands[1][loc]=1;
+        }
+        if (dir < 0){
+            commands[2][loc]=1;
+        }
+    }
 }
 
 void *receve(void *arg)
