@@ -2,7 +2,7 @@
 CC = gcc
 
 # Compiler flags go here.
-CFLAGS = -g -Wall
+CFLAGS = -std=c99 -g -Wall
 
 # Linker flags go here.
 LDFLAGS = -lcomedi -lm
