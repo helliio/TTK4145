@@ -16,6 +16,6 @@ class Elev(Socket):
 class ElevListener(ListenerSocket):
     def accept(self):
         socket = ListenerSocket.accept(self)
-        Elev = Elev.from_socket(socket)
+        Elevator = Elev.from_socket(socket)
         print "Elevator connected."
-        return Elev
+        return Elevator

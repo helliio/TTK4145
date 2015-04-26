@@ -8,37 +8,10 @@ address = ('localhost', 10000)
 
 elevator_list = []
 
-sending = []
+def handle_disconnect(Elev):
+    for i in Elev.orders:
+        move_elevator(i[0],i[1])
 
-listen = ElevListener(*address)
-
-def waiting():
-    select(elevator_list + [listen], sending, [])
-
-def incomming():
-    return select([listen], [], [], 0)[0]
-
-def get_elevator():
-    return select(elevator_list, [], [], 0)[0]
-
-def writing():
-    return select([], sending, [], 0)[1]
-
-
-def move_elevator(floor, dir):
-    message = str(floor)+" "+str(dir)
-    for Elev in elevator_list:
-        if (dir == 1) and ( (Elev.dir == 1) or (Elev.dir == 0) ) and (Elev.floor <= floor) :
-            break
-        elif (dir == -1) and ( (Elev.dir == -1) or (Elev.dir == 0) )  and (Elev.floor >= floor):
-            break
-    else:
-        Elev = choice(elevator_list)
-    
-    Elev.writeln(message)
-    Elev.orders.add(floor, dir)
-        
-    
 def handle_button(Elev):
     message = Elev.readln()
     message = message.split()
@@ -49,15 +22,44 @@ def handle_button(Elev):
     if message[0] == "loc":
         Elev.floor = floor
         Elev.dir = dir
-        
-def handle_disconnect(Elev):
-    for i in Elev.orders:
-        move_elevator(i[0],i[1])
-    
+
+def move_elevator(floor, dir):
+    message = str(floor)+" "+str(dir)
+    for Elev in elevator_list:
+        elev_up = (Elev.dir == 1) or (Elev.dir == 0)
+        elev_down = (Elev.dir == -1) or (Elev.dir == 0)
+        if (dir == 1) and elev_up and (Elev.floor <= floor) :
+            break
+        elif (dir == -1) and elev_down and (Elev.floor >= floor):
+            break
+    else:
+        Elev = choice(elevator_list)
+    Elev.writeln(message)
+    Elev.orders.add((floor, dir))
+
 def main():
     
+    sending = []
+    listen = ElevListener(*address)
+    
+    def waiting():
+        select(elevator_list + [listen], sending, [])
+
+    def incomming():
+        return select([listen], [], [], 0)[0]
+
+    def get_elevator():
+        return select(elevator_list, [], [], 0)[0]
+
+    def writing():
+        return select([], sending, [], 0)[1]
+
     while 1:
+        print "running"
+        
         waiting()
+        
+        
         for socket in incomming():
             elevator_list.append(socket.accept())
             
@@ -72,6 +74,8 @@ def main():
         for socket in writing():
             socket.transport_out()
         sending = filter(Socket.is_sending, elevator_list)
+        print sending
+        print writing
     
 if __name__ == '__main__':
     main()
