@@ -1,5 +1,6 @@
 #include "elev.h"
 #include "client.h"
+#include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
 #include <time.h>
@@ -8,14 +9,18 @@
 #include <netinet/in.h>
 #include <netdb.h> 
 #include <string.h>
+#include <pthread.h>
+#include <semaphore.h>
+#include <arpa/inet.h>
+#include <signal.h>
 
 int commands[3][N_FLOORS];
 int move_dir = 0;
+int var = 0;
 time_t door_timer;
 int sock;
 char last_sent[20];
 char last_button[20];
-char message[256];
 
 void initialize(void){
     int i, j;
@@ -32,6 +37,36 @@ void initialize(void){
         }
         elev_set_motor_direction(DIRN_DOWN);
     }
+    
+    
+    struct sockaddr_in server;
+
+    //Create socket
+    sock = socket(AF_INET , SOCK_STREAM , 0);
+    if (sock == -1)
+    {
+        printf("Could not create socket");
+    }
+    puts("Socket created");
+
+    //server.sin_addr.s_addr = inet_addr("129.241.187.140");
+    server.sin_addr.s_addr = inet_addr("127.0.0.1");
+    server.sin_family = AF_INET;
+    server.sin_port = htons(8080);
+
+    //Connect to remote server
+    if (connect(sock , (struct sockaddr *)&server , sizeof(server)) < 0)
+    {
+        perror("connect failed. Error");
+        return;
+    }
+
+    puts("Connected\n");
+    
+    pthread_t thread;
+    pthread_create(&thread, NULL, receve, &var);
+    
+
     send_location(1);
 }
 
@@ -50,6 +85,7 @@ void send_location(int stop){
             if (strcmp(output_s, last_sent) != 0){
                 strcpy(last_sent, output_s);
                 printf(output_s);
+                send(sock,output_s,strlen(output_s), 0);
             }
         }
         if (stop == 0){
@@ -59,6 +95,7 @@ void send_location(int stop){
             if (strcmp(output, last_sent) != 0){
                 strcpy(last_sent, output);
                 printf(output);
+                send(sock,output,strlen(output), 0);
             }
         }
     }
@@ -75,6 +112,7 @@ void send_button(int floor, int dir){
     if (strcmp(output, last_button) != 0){
         strcpy(last_button, output);
         printf(output);
+        send(sock,output,strlen(output), 0);
     }
 }
 
