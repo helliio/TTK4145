@@ -9,18 +9,20 @@ int main() {
         printf("Unable to initialize elevator hardware!\n");
         return 1;
     }
-    initialize_io_pannel();
+    initialize();
 
     printf("Press STOP button to stop elevator and exit program.\n");
+    
+
 
     while (1) {
         
         set_elev_floor_lamp();
         listen_to_io_panels();
+
         if(is_door_open(3) == 0){
         	execute_orders();
         }
-
         
 
         // Stop elevator and exit program if the stop button is pressed

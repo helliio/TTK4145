@@ -2,6 +2,7 @@
 #include "client.h"
 #include <stdio.h>
 
+int counter = 0;
 
 int main() {
     // Initialize hardware
@@ -9,20 +10,24 @@ int main() {
         printf("Unable to initialize elevator hardware!\n");
         return 1;
     }
-    initialize_io_pannel();
+    initialize();
 
     printf("Press STOP button to stop elevator and exit program.\n");
+    
+
 
     while (1) {
         
         set_elev_floor_lamp();
-        listen_to_io_panels();
-        execute_orders();
-        printf ("%d", is_door_open(3));
+        if (counter>=6000){
+            listen_to_io_panels();
+            counter = 0;
+
+        }
         if(is_door_open(3) == 0){
         	execute_orders();
         }
-
+        counter++;
         
 
         // Stop elevator and exit program if the stop button is pressed

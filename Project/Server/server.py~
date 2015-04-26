@@ -25,7 +25,7 @@ def handle_elev_msg(Elev):
     if message[0] == "stop":
         Elev.order_list.discard((floor,dir))
         for elevator in elevator_list:
-            elevator.writeln("lite "+str(floor)+" "+str(dir))
+            elevator.writeln("light "+str(floor)+" "+str(dir))
         
 
 def move_elevator(floor, dir):
