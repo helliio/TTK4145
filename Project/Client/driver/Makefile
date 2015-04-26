@@ -5,7 +5,7 @@ CC = gcc
 CFLAGS = -std=c99 -g -Wall
 
 # Linker flags go here.
-LDFLAGS = -lcomedi -lm
+LDFLAGS = -lpthread -lcomedi -lm
 
 # list of sources
 ELEVSRC = elev.c io.c main.c client.c
