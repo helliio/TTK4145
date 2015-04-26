@@ -1,5 +1,19 @@
 from mysocket import Socket, ListenerSocket
 
+#            ELEVATE!
+#              /
+#         ____
+#       .'    '=====<0
+#       |======|
+#       |======|
+#       [IIIIII[\--()
+#       |_______|
+#       C O O O D
+#      C O  O  O D
+#     C  O  O  O  D
+#     C__O__O__O__D
+#    [_____________]
+
 class Elev(Socket):
     def __init__(self):
         self.floor = None;
