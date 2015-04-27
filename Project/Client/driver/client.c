@@ -76,6 +76,9 @@ void act_message(char * message)
     int loc;
     int dir;
 
+	puts("Got: ");
+	puts(message);
+
 	int scans = sscanf(message, "%s %d %d", msg, &loc, &dir);
 
 	if(scans != 3)
@@ -112,6 +115,9 @@ void *receve(void *arg)
 	for(;;)
 	{
 		buf_fill += recv(sock, buf_end, buf_space, 0);
+
+		puts("Buf: ");
+		puts(buf);
 
 		char * next_line = strchr(buf, '\n') + 1;
 		int line_len = next_line - buf;
@@ -372,14 +378,14 @@ void listen_to_io_panels(void){
             if(elev_get_button_signal(BUTTON_CALL_UP, i) == 1){
                 elev_set_button_lamp(BUTTON_CALL_UP, i, 1);
                 send_button(i, 1);
-                commands[1][i]=1;
+                //commands[1][i]=1;
             }
         }
         if(i > 0){
             if(elev_get_button_signal(BUTTON_CALL_DOWN, i) == 1){
                 elev_set_button_lamp(BUTTON_CALL_DOWN, i, 1);
                 send_button(i, -1);
-                commands[2][i]=1;
+                //commands[2][i]=1;
             }
         }
     }

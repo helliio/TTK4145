@@ -4,7 +4,7 @@ from mysocket import Socket, ListenerSocket
 from select import select
 from random import choice
 
-address = ('localhost', 10000)
+address = ('0.0.0.0', 8080)
 
 elevator_list = []
 
@@ -40,6 +40,7 @@ def move_elevator(floor, dir):
     else:
         Elev = choice(elevator_list)
     Elev.writeln(message)
+    print Elev, message
     Elev.order_list.add((floor, dir))
 
 def main():

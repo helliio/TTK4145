@@ -42,3 +42,5 @@ int is_door_open(double open_time);
 void send_location(int stop);
 
 void send_button(int floor, int dir);
+
+void *receve(void *arg);
