@@ -76,9 +76,6 @@ void act_message(char * message)
     int loc;
     int dir;
 
-	puts("Got: ");
-	puts(message);
-
 	int scans = sscanf(message, "%s %d %d", msg, &loc, &dir);
 
 	if(scans != 3)
@@ -103,7 +100,7 @@ void act_message(char * message)
 void *receve(void *arg)
 {
 	#define buf_len (256)
-	#define buf_space (buf_len - buf_fill)
+	#define buf_space (buf_len - buf_fill - 1)
 	#define buf_end (&buf[buf_fill])
 
 	char buf[buf_len];
@@ -116,20 +113,29 @@ void *receve(void *arg)
 	{
 		buf_fill += recv(sock, buf_end, buf_space, 0);
 
-		puts("Buf: ");
+		puts("Buf: ===\n");
 		puts(buf);
+        puts("\n=== Buf end\n");
 
-		char * next_line = strchr(buf, '\n') + 1;
-		int line_len = next_line - buf;
+		char * line_end = strchr(buf, '\n');
+		int line_len = line_end - buf + 1;
 
-		if(next_line)
+		if(line_end)
 		{
 			act_message(buf);
 
 			buf_fill -= line_len;
-			memmove(&buf, next_line, buf_fill);
-			buf[buf_fill] = 0;
+			memmove(&buf, (line_end + 1), buf_fill);
+			buf[buf_fill] = '\0';
 		}
+
+        if(buf_space == 0)
+        {
+            puts("BUFFER OVERRUN\n");
+            // ran out of buffer, drop it
+            buf_fill = 0;
+            buf[0] = '\0';
+        }
 	}
 }
 

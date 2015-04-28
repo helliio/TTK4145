@@ -3,6 +3,7 @@ from elevators import Elev, ElevListener
 from mysocket import Socket, ListenerSocket
 from select import select
 from random import choice
+from math import fabs
 
 address = ('0.0.0.0', 8080)
 
@@ -30,19 +31,28 @@ def handle_elev_msg(Elev):
 
 def move_elevator(floor, dir):
     message = "move "+str(floor)+" "+str(dir)
+    the_chosen = None
     for Elev in elevator_list:
-        elev_up = (Elev.dir == 1) or (Elev.dir == 0)
-        elev_down = (Elev.dir == -1) or (Elev.dir == 0)
+        elev_up = (Elev.dir == 1)
+        elev_down = (Elev.dir == -1)
         if (dir == 1) and elev_up and (Elev.floor <= floor) :
             break
         elif (dir == -1) and elev_down and (Elev.floor >= floor):
             break
+        elif ((dir == 1) or (dir == -1)) and Elev.dir == 0:
+            if (Elev.floor+1 == floor) or (Elev.floor-1 == floor):
+                break
     else:
-        Elev = choice(elevator_list)
+        the_chosen = elevator_list[0]
+        for i in elevator_list:
+            if fabs(i.floor -floor) <= (the_chosen.floor - floor):
+                the_chosen = i
+        Elev = the_chosen            
+        
     Elev.writeln(message)
     print Elev, message
     Elev.order_list.add((floor, dir))
-
+    
 def main():
     
     sending = []
@@ -60,8 +70,8 @@ def main():
     def writing():
         return select([], sending, [], 0)[1]
 
+    print "running"
     while 1:
-        print "running"
         
         waiting()
         
@@ -73,7 +83,8 @@ def main():
             if not socket.transport_in():
                 socket.close()
                 elevator_list.remove(socket)
-                handle_disconnect(socket)
+                if elevator_list:
+                    handle_disconnect(socket)
             if socket.hasln():
                 handle_elev_msg(socket)
                 
