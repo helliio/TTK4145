@@ -9,24 +9,31 @@ address = ('0.0.0.0', 8080)
 
 elevator_list = []
 
+last_sent = ""
+last_rec = ""
+
 def handle_disconnect(Elev):
     for i in Elev.order_list:
         move_elevator(i[0],i[1])
 
 def handle_elev_msg(Elev):
     message = Elev.readln()
-    message = message.split()
-    floor = int(message[1])
-    dir = int(message[2])
-    if message[0] == "btn":
-        move_elevator(floor,dir)
-    if message[0] in ("loc","stop"):
-        Elev.floor = floor
-        Elev.dir = dir
-    if message[0] == "stop":
-        Elev.order_list.discard((floor,dir))
-        for elevator in elevator_list:
-            elevator.writeln("lite "+str(floor)+" "+str(dir))
+    global last_rec
+    if message != last_rec:
+        last_rec = message
+        print message
+        message = message.split()
+        floor = int(message[1])
+        dir = int(message[2])
+        if message[0] == "btn":
+            move_elevator(floor,dir)
+        if message[0] in ("loc","stop"):
+            Elev.floor = floor
+            Elev.dir = dir
+        if message[0] == "stop":
+            Elev.order_list.discard((floor,dir))
+            for elevator in elevator_list:
+                elevator.writeln("lite "+str(floor)+" "+str(dir))
         
 
 def move_elevator(floor, dir):
@@ -47,11 +54,13 @@ def move_elevator(floor, dir):
         for i in elevator_list:
             if fabs(i.floor -floor) <= (the_chosen.floor - floor):
                 the_chosen = i
-        Elev = the_chosen            
-        
-    Elev.writeln(message)
-    print Elev, message
-    Elev.order_list.add((floor, dir))
+        Elev = the_chosen  
+    global last_sent          
+    if message != last_sent:
+        Elev.writeln(message)
+        print Elev, message
+        Elev.order_list.add((floor, dir))
+        last_sent = message
     
 def main():
     
