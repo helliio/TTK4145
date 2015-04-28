@@ -20,7 +20,7 @@ int var = 0;
 time_t door_timer;
 int sock;
 char last_sent[20];
-char last_button[20];
+char message[256];
 
 void initialize(void){
     int i, j;
@@ -52,7 +52,7 @@ void initialize(void){
     //server.sin_addr.s_addr = inet_addr("129.241.187.140");
     server.sin_addr.s_addr = inet_addr("127.0.0.1");
     server.sin_family = AF_INET;
-    server.sin_port = htons(8080);
+    server.sin_port = htons(8081);
 
     //Connect to remote server
     if (connect(sock , (struct sockaddr *)&server , sizeof(server)) < 0)
@@ -99,44 +99,29 @@ void act_message(char * message)
 
 void *receve(void *arg)
 {
-	#define buf_len (256)
-	#define buf_space (buf_len - buf_fill - 1)
-	#define buf_end (&buf[buf_fill])
-
-	char buf[buf_len];
-	int buf_fill = 0;
-
-	// ensure the buffer can be treated as a string
-	buf[0] = '\0';
+    /*
+	static char buf[21];
 
 	for(;;)
 	{
-		buf_fill += recv(sock, buf_end, buf_space, 0);
+		recv(sock, buf, 20, 0);
 
-		puts("Buf: ===\n");
+	    // ensure the buffer can be treated as a string
+	    buf[20] = '\0';
+
+		puts("Buf: ===");
 		puts(buf);
-        puts("\n=== Buf end\n");
+        puts("=== Buf end\n");
 
-		char * line_end = strchr(buf, '\n');
-		int line_len = line_end - buf + 1;
-
-		if(line_end)
-		{
-			act_message(buf);
-
-			buf_fill -= line_len;
-			memmove(&buf, (line_end + 1), buf_fill);
-			buf[buf_fill] = '\0';
-		}
-
-        if(buf_space == 0)
-        {
-            puts("BUFFER OVERRUN\n");
-            // ran out of buffer, drop it
-            buf_fill = 0;
-            buf[0] = '\0';
-        }
+		act_message(buf);
 	}
+	*/
+	while(1){
+	    recv(sock, message, 255, 0);
+	    act_message(message);
+	    printf(message);
+	}
+	return 0;
 }
 
 void send_location(int stop){
@@ -152,7 +137,7 @@ void send_location(int stop){
             strcat(strcat(strcat(strcat(output_s, floor)," "),direction), "\n");
             if (strcmp(output_s, last_sent) != 0){
                 strcpy(last_sent, output_s);
-                printf(output_s);
+                //printf(output_s);
                 send(sock,output_s,strlen(output_s), 0);
             }
         }
@@ -162,7 +147,7 @@ void send_location(int stop){
             strcat(strcat(strcat(strcat(output, floor)," "),direction), "\n");
             if (strcmp(output, last_sent) != 0){
                 strcpy(last_sent, output);
-                printf(output);
+                //printf(output);
                 send(sock,output,strlen(output), 0);
             }
         }
@@ -177,11 +162,8 @@ void send_button(int floor, int dir){
     snprintf(loc,20,"%d",floor);
     snprintf(direction,20,"%d",dir);
     strcat(strcat(strcat(strcat(output, loc)," "),direction), "\n");
-    if (strcmp(output, last_button) != 0){
-        strcpy(last_button, output);
-        printf(output);
-        send(sock,output,strlen(output), 0);
-    }
+    send(sock,output,strlen(output), 0);
+    //elev_get_button_signal(BUTTON_COMMAND, i)
 }
 
 int is_door_open(double open_time){
@@ -322,7 +304,6 @@ void execute_orders(void){
 }
 
 void stop_and_open(void){
-    strcpy(last_button, "");
     send_location(1);
     int i = elev_get_floor_sensor_signal();
     elev_set_motor_direction(DIRN_STOP);
